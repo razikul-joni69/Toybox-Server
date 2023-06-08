@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require("dotenv/config")
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const app = express();
 
@@ -32,10 +32,19 @@ async function main() {
             console.log(`Application listening on port ${PORT}`)
         })
 
+        // INFO: get all toys
         app.get("/api/v1/alltoys", async (req, res) => {
             const result = await toys.find().toArray()
             res.send(result);
         });
+
+        // INFO: get toys by id
+        app.get("/api/v1/toy/:id", async (req, res) => {
+            const { id } = req.params
+            const result = await toys.findOne({ _id: new ObjectId(id) })
+            res.send(result);
+        });
+
 
     } catch (err) {
         console.log('Failed to connect database ~ ', err.message)
