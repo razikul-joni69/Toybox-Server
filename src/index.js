@@ -55,8 +55,14 @@ async function main() {
         // INFO: Add a new toy to the database
         app.post("/api/v1/add-toy", async (req, res) => {
             const newToy = req.body;
-            console.log(newToy);
             const result = await toysCollection.insertOne(newToy)
+            res.send(result);
+        });
+
+        // INFO: get only the users toy [my-toys]
+        app.get("/api/v1/my-toys", async (req, res) => {
+            const { email } = req.query;
+            const result = await toysCollection.find({ seller_email: email }).toArray()
             res.send(result);
         });
 
