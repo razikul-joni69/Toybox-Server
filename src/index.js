@@ -26,7 +26,7 @@ async function main() {
         await client.connect();
         console.log('Database connection established')
 
-        const toys = client.db("toybox").collection("toys")
+        const toysCollection = client.db("toybox").collection("toys")
 
         app.listen(PORT, () => {
             console.log(`Application listening on port ${PORT}`)
@@ -34,14 +34,29 @@ async function main() {
 
         // INFO: get all toys
         app.get("/api/v1/alltoys", async (req, res) => {
-            const result = await toys.find().toArray()
+            const result = await toysCollection.find().toArray()
             res.send(result);
         });
 
-        // INFO: get toys by id
+        // INFO: get toy by id
         app.get("/api/v1/toy/:id", async (req, res) => {
             const { id } = req.params
-            const result = await toys.findOne({ _id: new ObjectId(id) })
+            const result = await toysCollection.findOne({ _id: new ObjectId(id) })
+            res.send(result);
+        });
+
+        // INFO: delete a toy by id
+        app.get("/api/v1/deletetoy/:id", async (req, res) => {
+            const { id } = req.params
+            const result = await toysCollection.deleteOne({ _id: new ObjectId(id) })
+            res.send(result);
+        });
+
+        // INFO: Add a new toy to the database
+        app.post("/api/v1/add-toy", async (req, res) => {
+            const newToy = req.body;
+            console.log(newToy);
+            const result = await toysCollection.insertOne(newToy)
             res.send(result);
         });
 
