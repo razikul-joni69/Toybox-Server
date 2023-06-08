@@ -46,7 +46,7 @@ async function main() {
         });
 
         // INFO: delete a toy by id
-        app.get("/api/v1/deletetoy/:id", async (req, res) => {
+        app.delete("/api/v1/toys/delete-toy/:id", async (req, res) => {
             const { id } = req.params
             const result = await toysCollection.deleteOne({ _id: new ObjectId(id) })
             res.send(result);
