@@ -45,6 +45,20 @@ async function main() {
             res.send(result);
         });
 
+        // INFO: update toys by id
+        app.put("/api/v1/update-toy/:id", async (req, res) => {
+            const { id } = req.params
+            const updatedToy = req.body;
+            const updateDoc = {
+                $set: {
+                    ...updatedToy
+                },
+            };
+            const result = await toysCollection.updateOne({ _id: new ObjectId(id) }, updateDoc, { upsert: true })
+            console.log(result);
+            res.send(result);
+        });
+
         // INFO: delete a toy by id
         app.delete("/api/v1/toys/delete-toy/:id", async (req, res) => {
             const { id } = req.params
