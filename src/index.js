@@ -32,9 +32,14 @@ async function main() {
             console.log(`Application listening on port ${PORT}`)
         })
 
+        // Demo Route Foe see the server is running or not
+        app.get("/", (req, res) => {
+            res.send("Toybox server is running...")
+        })
+
         // INFO: get all toys
         app.get("/api/v1/alltoys", async (req, res) => {
-            const result = await toysCollection.find().toArray()
+            const result = await toysCollection.find().limit(20).toArray()
             res.send(result);
         });
 
@@ -77,6 +82,15 @@ async function main() {
         app.get("/api/v1/my-toys", async (req, res) => {
             const { email } = req.query;
             const result = await toysCollection.find({ seller_email: email }).toArray()
+            res.send(result);
+        });
+
+        // INFO: get sorted toys [my-toys]
+        app.get("/api/v1/my-sorted-toys", async (req, res) => {
+            const { email } = req.query;
+            const { sortingMethod } = req.query;
+            const sortBy = parseInt(sortingMethod)
+            const result = await toysCollection.find({ seller_email: email }).sort({ price: sortBy }).toArray()
             res.send(result);
         });
 
