@@ -39,7 +39,9 @@ async function main() {
 
         // INFO: get all toys
         app.get("/api/v1/alltoys", async (req, res) => {
-            const result = await toysCollection.find().limit(20).toArray()
+            const { limit } = req.query;
+            const limitBy = parseInt(limit)
+            const result = await toysCollection.find().limit(limitBy).toArray()
             res.send(result);
         });
 
