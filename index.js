@@ -1,5 +1,5 @@
 const express = require('express');
-const cors = require('cors');
+const cors = require("cors");
 require("dotenv/config")
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
@@ -8,6 +8,23 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
+
+// Customize cors policy
+const origin =
+    process.env.NODE_ENV === "production"
+        ? process.env.FRONTEND_PROD_URL
+        : process.env.FRONTEND_LOCAL_URL;
+
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", origin);
+    res.header("Access-Control-Allow-Credentials", true);
+
+    if (req.method === "OPTIONS") {
+        res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
+        return res.status(200).json({});
+    }
+    next();
+});
 
 //Parse Data
 app.use(express.urlencoded({ extended: true }));
