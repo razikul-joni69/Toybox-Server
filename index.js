@@ -9,20 +9,23 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 
-// Customize cors policy
-const origin =
-    process.env.NODE_ENV === "production"
-        ? process.env.FRONTEND_PROD_URL
-        : process.env.FRONTEND_LOCAL_URL;
+// Add headers before the routes are defined
+app.use(function (req, res, next) {
 
-app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", origin);
-    res.header("Access-Control-Allow-Credentials", true);
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', 'https://toybox-toy.netlify.app/');
 
-    if (req.method === "OPTIONS") {
-        res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
-        return res.status(200).json({});
-    }
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+
+    // Pass to next layer of middleware
     next();
 });
 
@@ -79,7 +82,6 @@ async function main() {
                 },
             };
             const result = await toysCollection.updateOne({ _id: new ObjectId(id) }, updateDoc, { upsert: true })
-            console.log(result);
             res.send(result);
         });
 
