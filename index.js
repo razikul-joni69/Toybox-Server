@@ -7,9 +7,7 @@ const app = express();
 
 const PORT = process.env.PORT || 5000;
 
-app.use(cors({
-    origin: '*'
-}));
+app.use(cors());
 
 //Parse Data
 app.use(express.urlencoded({ extended: true }));
@@ -42,8 +40,9 @@ async function main() {
         // INFO: get all toys
         app.get("/api/v1/alltoys", async (req, res) => {
             const { limit } = req.query;
+            const { search } = req.query;
             const limitBy = parseInt(limit)
-            const result = await toysCollection.find().limit(limitBy).toArray()
+            const result = await toysCollection.find({ toy_name: { $regex: search, $options: "i" } }).limit(limitBy).toArray()
             res.send(result);
         });
 
@@ -96,7 +95,6 @@ async function main() {
             const result = await toysCollection.find({ seller_email: email }).sort({ price: sortBy }).toArray()
             res.send(result);
         });
-
 
     } catch (err) {
         console.log('Failed to connect database ~ ', err.message)
